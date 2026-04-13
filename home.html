@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row align-items-center min-vh-75 mt-5">
+    <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start position-relative z-10">
+        <div class="badge border border-success text-success bg-dark bg-opacity-50 p-2 rounded-pill mb-4 glass-panel d-inline-block">
+            <i class="bi bi-heart-fill me-1"></i> A Community Initiative
+        </div>
+        <h1 class="display-3 fw-bold mb-4 brand-font leading-tight text-white">
+            Share Food, <br> Spread Hope.
+        </h1>
+        <p class="lead text-muted mb-5 pe-lg-5">
+            Connect your leftover fresh food directly with local orphanages and shelters using our smart matching platform. Together, we can ensure no good food goes to waste.
+        </p>
+        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+            <a href="{% url 'register' %}" class="btn btn-premium btn-lg px-5">Join our Network</a>
+            <a href="#how-we-help" class="btn btn-glass btn-lg px-5">How We Help</a>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 position-relative z-10">
+        <div class="glass-panel p-2 hover-lift d-flex align-items-center justify-content-center overflow-hidden" style="height: 100%; min-height: 400px;">
+            <img src="{% static 'images/hero.png' %}" alt="Food Donation Hero" class="img-fluid rounded-4 shadow-lg border border-secondary border-opacity-50" style="object-fit: cover; width: 100%; height: 100%; max-height: 480px;">
+        </div>
+    </div>
+</div>
+
+<div id="how-we-help" class="mt-5 pt-5 pb-5 position-relative z-10">
+    <div class="text-center mb-5">
+        <h2 class="brand-font h1 text-white">How We Help</h2>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100 hover-lift text-center d-flex flex-column">
+                <div class="bg-dark d-inline-flex justify-content-center align-items-center rounded-circle border border-success" style="width: 70px; height: 70px; margin: 0 auto; box-shadow: 0 0 20px rgba(16,185,129,0.2);">
+                    <i class="bi bi-geo-alt-fill text-success fs-1"></i>
+                </div>
+                <h4 class="brand-font text-white mt-4">Smart Localization</h4>
+                <p class="text-muted small flex-grow-1">We automatically match food donations to the nearest available orphanages and shelters using precise GPS mapping algorithms so hot food arrives faster.</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-success btn-sm w-100 mt-2 rounded-pill fw-bold">Donate Food Locally</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100 hover-lift text-center d-flex flex-column">
+                <div class="bg-dark d-inline-flex justify-content-center align-items-center rounded-circle border border-primary" style="width: 70px; height: 70px; margin: 0 auto; box-shadow: 0 0 20px rgba(59,130,246,0.2);">
+                    <i class="bi bi-shield-check text-primary fs-1"></i>
+                </div>
+                <h4 class="brand-font text-white mt-4">Quality Assurance</h4>
+                <p class="text-muted small flex-grow-1">Every donation is strictly monitored for expiration. Verified organizations only receive fresh food proposals they can actually accommodate.</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill fw-bold">Join the Network</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-panel p-4 h-100 hover-lift text-center d-flex flex-column">
+                <div class="bg-dark d-inline-flex justify-content-center align-items-center rounded-circle border border-warning" style="width: 70px; height: 70px; margin: 0 auto; box-shadow: 0 0 20px rgba(245,158,11,0.2);">
+                    <i class="bi bi-building-heart text-warning fs-1"></i>
+                </div>
+                <h4 class="brand-font text-white mt-4">For Organizations</h4>
+                <p class="text-muted small flex-grow-1">Shelters set their own capacity limits in real-time. You only get alerted for food amounts that physically fit your current needs.</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-warning btn-sm w-100 mt-2 rounded-pill fw-bold">Register an NGO</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row pt-3 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+    <div class="col-12">
+        <h2 class="brand-font text-white mb-1"><i class="bi bi-box-arrow-up-right text-warning me-2"></i>New Payload Initialization</h2>
+        <p class="text-muted mb-0 font-monospace small">Enter logistics parameters for grid matching.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="glass-panel p-4 p-md-5 position-relative overflow-hidden">
+            <!-- Decorative tech lines -->
+            <div class="position-absolute top-0 start-0 w-100" style="height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="text-white">
+                            {{ form.food_name|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-white">
+                            {{ form.quantity_kg|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-white">
+                            {{ form.cooked_time|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-white">
+                            {{ form.expiry_time|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 mt-4 pt-4 border-top border-secondary border-opacity-50">
+                        <h5 class="text-white brand-font mb-3"><i class="bi bi-geo-fill text-primary me-2"></i>Waypoint Coordinates</h5>
+                        
+                        <div class="text-white mb-3">
+                            {{ form.location_address|as_crispy_field }}
+                        </div>
+                        
+                        <div class="glass-panel bg-opacity-25 border-primary border-opacity-50 p-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                            <div style="font-size: 0.85rem;" class="text-muted font-monospace">
+                                <div><i class="bi bi-info-circle text-primary me-1"></i> Highly accurate payload vectoring requires precise HTML5 Geolocation targeting.</div>
+                                <div id="locPostStatus" class="mt-1 fw-bold text-warning">Awaiting GPS handshake...</div>
+                            </div>
+                            <button type="button" id="getFoodLocBtn" class="btn btn-primary btn-sm rounded-pill font-monospace shadow-sm hover-lift text-nowrap">
+                                <i class="bi bi-crosshair me-1"></i> ACQUIRE LOCK
+                            </button>
+                        </div>
+                        
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-5 pt-3">
+                    <a href="{% url 'donor_dashboard' %}" class="btn btn-outline-secondary px-4 rounded-pill font-monospace">ABORT</a>
+                    <button type="submit" class="btn btn-premium px-5 shadow-sm font-monospace text-uppercase hover-lift">
+                        <i class="bi bi-send-fill me-2"></i> Deploy Payload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const getLocBtn = document.getElementById('getFoodLocBtn');
+        const latInput = document.getElementById('donor_lat');
+        const lngInput = document.getElementById('donor_lng');
+        const locStatus = document.getElementById('locPostStatus');
+        
+        getLocBtn.addEventListener('click', function() {
+            if ("geolocation" in navigator) {
+                locStatus.innerText = "Querying satellite network...";
+                locStatus.className = "text-warning mt-1 fw-bold";
+                
+                getLocBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> SCANNING';
+                getLocBtn.disabled = true;
+
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    latInput.value = position.coords.latitude;
+                    lngInput.value = position.coords.longitude;
+                    locStatus.innerHTML = "<i class='bi bi-shield-check me-1'></i> GPS LOCKED: " + position.coords.latitude.toFixed(4) + ", " + position.coords.longitude.toFixed(4);
+                    locStatus.className = "text-success mt-1 fw-bold";
+                    document.getElementById('id_location_address').value = "COORDINATES SECURED";
+                    
+                    getLocBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> RE-ACQUIRE';
+                    getLocBtn.disabled = false;
+                }, function(error) {
+                    locStatus.innerText = "GPS LOCK FAILED. Manual override required.";
+                    locStatus.className = "text-danger mt-1 fw-bold";
+                    
+                    getLocBtn.innerHTML = '<i class="bi bi-crosshair me-1"></i> ACQUIRE LOCK';
+                    getLocBtn.disabled = false;
+                });
+            } else {
+                locStatus.innerText = "Hardware incompatible with tracking API.";
+                locStatus.className = "text-danger mt-1 fw-bold";
+            }
+        });
+    });
+</script>
+{% endblock %}

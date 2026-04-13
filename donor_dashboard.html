@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-25 mt-4 position-relative z-10">
+    <div class="col-md-8">
+        <h2 class="brand-font text-white mb-1"><i class="bi bi-grid-1x2 text-success me-2"></i>DONOR / Control Interface</h2>
+        <p class="text-muted mb-0 font-monospace small">SYS_STATUS: Tracking active logistics nodes</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'create_donation' %}" class="btn btn-premium rounded-pill">
+            <i class="bi bi-plus-lg me-1"></i> New Payload
+        </a>
+    </div>
+</div>
+
+<div class="glass-panel overflow-hidden border-0 position-relative z-10 mt-3">
+    <div class="table-responsive">
+        <table class="table table-dark table-borderless table-hover align-middle mb-0" style="background: transparent;">
+            <thead class="text-secondary small font-monospace text-uppercase" style="border-bottom: 2px solid rgba(255,255,255,0.05);">
+                <tr>
+                    <th class="ps-4 py-3">Payload Designation</th>
+                    <th class="py-3">Volume</th>
+                    <th class="py-3">Critical Window</th>
+                    <th class="py-3">State</th>
+                    <th class="py-3">Vector / NGO</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donation in donations %}
+                <tr class="border-bottom border-light border-opacity-10">
+                    <td class="ps-4 py-3">
+                        <strong class="text-white d-block mb-1">{{ donation.food_name }}</strong>
+                        <span class="text-muted small"><i class="bi bi-clock-history me-1"></i>Cooked: {{ donation.cooked_time|date:"y/m/d H:i" }}</span>
+                    </td>
+                    <td class="py-3"><span class="badge bg-dark border border-secondary text-light px-2 py-1">{{ donation.quantity_kg }} KG</span></td>
+                    <td class="py-3 text-muted small font-monospace">{{ donation.expiry_time|date:"y/m/d H:i" }}</td>
+                    <td class="py-3">
+                        {% if donation.status == 'PENDING' %}
+                            <span class="badge rounded-pill bg-warning bg-opacity-25 text-warning border border-warning"><i class="bi bi-broadcast me-1"></i>BROADCASTING</span>
+                        {% elif donation.status == 'ASSIGNED' %}
+                            <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary border border-primary"><i class="bi bi-geo-alt-fill me-1"></i>VECTOR ASSIGNED</span>
+                        {% elif donation.status == 'COMPLETED' %}
+                            <span class="badge rounded-pill bg-success bg-opacity-25 text-success border border-success"><i class="bi bi-check2-all me-1"></i>DELIVERED</span>
+                        {% elif donation.status == 'EXPIRED' %}
+                            <span class="badge rounded-pill bg-danger bg-opacity-25 text-danger border border-danger"><i class="bi bi-x-octagon-fill me-1"></i>SYSTEM LOCK</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3">
+                        {% if donation.status == 'ASSIGNED' or donation.status == 'COMPLETED' %}
+                            <span class="text-white fw-semibold">{{ donation.transaction_record.ngo.organization_name }}</span>
+                        {% else %}
+                            <span class="text-secondary font-monospace">AWAITING HANDSHAKE</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <div class="d-inline-block text-center glass-panel bg-opacity-10 border-0 p-5 rounded-4 mt-3">
+                            <i class="bi bi-hdd-network text-secondary display-3 mb-3"></i>
+                            <h5 class="text-white brand-font">No Active Payloads</h5>
+                            <p class="text-muted small mb-0">System standing by for donation coordinates.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

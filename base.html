@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodShare Vanguard</title>
+    
+    <!-- Google Fonts: Outfit and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            /* Premium Dark Theme Palette */
+            --bg-base: #0f172a; /* Slate 900 */
+            --bg-card: rgba(30, 41, 59, 0.7); /* Slate 800 Glass */
+            --primary: #10b981; /* Emerald 500 */
+            --primary-hover: #059669; /* Emerald 600 */
+            --accent: #3b82f6; /* Blue 500 */
+            --text-main: #f8fafc; /* Slate 50 */
+            --text-muted: #94a3b8; /* Slate 400 */
+            --border-glass: rgba(255, 255, 255, 0.1);
+            scroll-padding-top: 90px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body { 
+            background: radial-gradient(circle at top left, #1e293b, var(--bg-base) 60%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Nav Styling */
+        .custom-navbar {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-glass);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; color: #fff !important; }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link { color: var(--text-muted) !important; font-weight: 500; transition: color 0.2s; }
+        .nav-link:hover { color: #fff !important; }
+
+        /* Button Styling */
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            color: white;
+        }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid var(--border-glass);
+            border-radius: 50px;
+            transition: all 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .btn-glass:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* Micro-animations */
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* Main Content wrapper */
+        main { flex: 1; position: relative; z-index: 10; padding-top: 2rem; padding-bottom: 3rem; }
+
+        /* Tables & Forms inside dark mode */
+        table { color: var(--text-main) !important; }
+        tbody tr { transition: background 0.2s; }
+        tbody tr:hover { background: rgba(255,255,255,0.02) !important; }
+        td, th { border-color: rgba(255,255,255,0.1) !important; background: transparent !important; }
+        .form-control, .form-select { 
+            background-color: rgba(0,0,0,0.2) !important; 
+            border: 1px solid var(--border-glass) !important; 
+            color: white !important; 
+        }
+        .form-control:focus { box-shadow: 0 0 0 3px rgba(16,185,129,0.2) !important; border-color: var(--primary) !important; }
+
+        /* Alerts */
+        .alert-glass {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            backdrop-filter: blur(10px);
+        }
+        .alert-success { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); color: #10b981; }
+        .alert-danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #ef4444; }
+
+        /* Background Effects */
+        .bg-glow {
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+            top: -100px; right: -100px;
+        }
+        .bg-glow-2 {
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+            bottom: -200px; left: -100px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Ambient decorative light splashes -->
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
+
+<nav class="navbar navbar-expand-lg custom-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center brand-font" href="{% url 'home' %}">
+        <i class="bi bi-basket-fill text-success fs-3 me-2"></i>
+        <span class="gradient-text">NourishNet</span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <i class="bi bi-list text-white fs-2"></i>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        {% if user.is_authenticated %}
+            {% if user.role == 'DONOR' %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'donor_dashboard' %}">Dashboard</a></li>
+            {% elif user.role == 'NGO' %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'ngo_dashboard' %}">Mission Hub</a></li>
+            {% endif %}
+            <li class="nav-item ms-lg-3 my-2 my-lg-0">
+                <span class="badge bg-dark border border-secondary p-2 rounded-pill d-flex align-items-center">
+                    <i class="bi bi-person-circle text-muted fs-6 me-2"></i> {{ user.username }}
+                </span>
+            </li>
+            <li class="nav-item ms-lg-3"><a class="btn btn-glass px-4" href="{% url 'logout' %}">Disconnect</a></li>
+        {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Portal Login</a></li>
+            <li class="nav-item ms-lg-3"><a class="btn btn-premium px-4" href="{% url 'register' %}">Join Network</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+    {% if messages %}
+        <div class="position-fixed top-0 start-50 translate-middle-x mt-4" style="z-index: 1050; width: 90%; max-width: 600px;">
+        {% for message in messages %}
+            <div class="alert alert-glass alert-{{ message.tags }} alert-dismissible fade show shadow-lg" role="alert">
+                <div class="d-flex align-items-center">
+                    {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill fs-5 me-2"></i>{% endif %}
+                    {% if message.tags == 'error' or message.tags == 'danger' %}<i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>{% endif %}
+                    <div>{{ message }}</div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

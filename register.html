@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm mt-4 mb-5">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0 text-center"><i class="bi bi-person-plus-fill me-2"></i>Register</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" id="registerForm">
+                    {% csrf_token %}
+                    
+                    {{ form.username|as_crispy_field }}
+                    {{ form.email|as_crispy_field }}
+                    {{ form.password|as_crispy_field }}
+                    {{ form.role|as_crispy_field }}
+                    {{ form.phone|as_crispy_field }}
+                    {{ form.address|as_crispy_field }}
+                    
+                    <div id="ngo-fields" style="display: none;" class="bg-light p-3 rounded border mb-3">
+                        <h5 class="text-success border-bottom pb-2 mb-3">NGO Details</h5>
+                        {{ form.organization_name|as_crispy_field }}
+                        {{ form.capacity_kg|as_crispy_field }}
+                        
+                        <!-- Manual + Auto Geolocation -->
+                        {{ form.location_string|as_crispy_field }}
+                        
+                        <div class="mb-3 text-center">
+                            <span class="text-muted small">OR</span>
+                            <br>
+                            <button type="button" id="getLocationBtn" class="btn btn-outline-primary btn-sm mt-2">
+                                <i class="bi bi-geo-alt-fill me-1"></i> Use My Current Location
+                            </button>
+                            <div id="locStatus" class="form-text text-success mt-1"></div>
+                        </div>
+                        
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success rounded-pill fw-bold py-2">Create Account</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-white text-center py-3">
+                Already have an account? <a href="{% url 'login' %}" class="text-success text-decoration-none fw-bold">Login here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const roleSelect = document.getElementById('id_role');
+        const ngoFields = document.getElementById('ngo-fields');
+        const getLocBtn = document.getElementById('getLocationBtn');
+        const latInput = document.getElementById('id_latitude');
+        const lngInput = document.getElementById('id_longitude');
+        const locStatus = document.getElementById('locStatus');
+        
+        function toggleFields() {
+            if (roleSelect.value === 'NGO') {
+                ngoFields.style.display = 'block';
+            } else {
+                ngoFields.style.display = 'none';
+            }
+        }
+        roleSelect.addEventListener('change', toggleFields);
+        toggleFields();
+        
+        getLocBtn.addEventListener('click', function() {
+            if ("geolocation" in navigator) {
+                locStatus.innerText = "Locating...";
+                locStatus.className = "form-text text-warning mt-1";
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    latInput.value = position.coords.latitude;
+                    lngInput.value = position.coords.longitude;
+                    locStatus.innerText = "Location successfully captured! (" + position.coords.latitude.toFixed(4) + ", " + position.coords.longitude.toFixed(4) + ")";
+                    locStatus.className = "form-text text-success mt-1 fw-bold";
+                    document.getElementById('id_location_string').value = "Coordinates captured automatically via browser";
+                }, function(error) {
+                    locStatus.innerText = "Error getting location. Please type manually.";
+                    locStatus.className = "form-text text-danger mt-1";
+                });
+            } else {
+                locStatus.innerText = "Geolocation not supported.";
+                locStatus.className = "form-text text-danger mt-1";
+            }
+        });
+    });
+</script>
+{% endblock %}

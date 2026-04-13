@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row pt-3 mb-4 border-bottom border-light border-opacity-10 pb-3 position-relative z-10">
+    <div class="col-8">
+        <h2 class="brand-font text-white mb-1"><i class="bi bi-building text-primary me-2"></i>NGO / Command Center</h2>
+        <h5 class="text-success mb-0 brand-font">{{ ngo.organization_name }}</h5>
+    </div>
+    <div class="col-4 text-end text-muted font-monospace small d-flex flex-column justify-content-center">
+        <span>STRC_CAPACITY: <span class="text-primary">{{ ngo.capacity_kg }} KG</span></span>
+        <span>NODE: [{{ ngo.latitude|floatformat:4 }}, {{ ngo.longitude|floatformat:4 }}]</span>
+    </div>
+</div>
+
+<div class="row g-4 position-relative z-10">
+    <!-- Active Radar -->
+    <div class="col-lg-7">
+        <h5 class="text-white brand-font mb-3"><i class="bi bi-radar text-success blink_me me-2"></i>Local Grid: Active Nodes</h5>
+        <div class="glass-panel p-3 h-100">
+            {% if available_donations %}
+                <div class="list-group list-group-flush bg-transparent">
+                {% for donation in available_donations %}
+                    <div class="list-group-item bg-transparent px-2 py-3 border-bottom border-light border-opacity-10">
+                        <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0 text-white brand-font">{{ donation.food_name }}</h5>
+                            <div class="badge border border-success bg-dark bg-opacity-50 text-success p-2 font-monospace">
+                                DIST: {{ donation.distance_km }}KM 
+                            </div>
+                        </div>
+                        <div class="row g-2 align-items-end mt-2">
+                            <div class="col-md-7">
+                                <div class="text-light small fw-bold mb-1"><i class="bi bi-box-seam text-muted me-1"></i> VOL: {{ donation.quantity_kg }} KG</div>
+                                <div class="text-muted small font-monospace"><i class="bi bi-person text-secondary me-1"></i>Src: {{ donation.donor.username }}</div>
+                                <div class="text-muted small font-monospace"><i class="bi bi-stopwatch text-warning me-1"></i>Exp: {{ donation.expiry_time|date:"y/m/d H:i" }}</div>
+                            </div>
+                            <div class="col-md-5">
+                                <form action="{% url 'claim_donation' donation.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-success btn-sm w-100 font-monospace hover-lift">
+                                        <i class="bi bi-link-45deg"></i> INITIATE LINK
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <i class="bi bi-search text-secondary display-4 mb-3"></i>
+                    <h5 class="text-white brand-font">Grid Clear</h5>
+                    <p class="text-muted small">No active payload broadcasts detected within threshold vectors.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Logistics Missions -->
+    <div class="col-lg-5">
+        <h5 class="text-white brand-font mb-3"><i class="bi bi-truck text-primary me-2"></i>Active Logistics</h5>
+        <div class="glass-panel p-3 h-100 bg-black bg-opacity-25" style="border-top-color: var(--primary);">
+            {% if claimed_transactions %}
+                <div class="d-flex flex-column gap-3">
+                {% for tx in claimed_transactions %}
+                    <div class="card bg-dark bg-opacity-50 border-0 border-start border-4 {% if tx.donation.status == 'COMPLETED' %}border-success opacity-50{% else %}border-primary{% endif %} shadow-sm">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0 text-white brand-font">{{ tx.donation.food_name }}</h6>
+                                {% if tx.donation.status == 'ASSIGNED' %}
+                                    <span class="badge text-bg-warning rounded-0 border border-warning" style="font-size: 0.6rem; letter-spacing: 1px;">EN-ROUTE</span>
+                                {% else %}
+                                    <span class="badge text-bg-success rounded-0 border border-success" style="font-size: 0.6rem; letter-spacing: 1px;">SECURED</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-muted font-monospace" style="font-size: 0.75rem;">
+                                <div><span class="text-light">PAYLOAD:</span> {{ tx.donation.quantity_kg }} KG</div>
+                                <div><span class="text-light">COMMS:</span> {{ tx.donation.donor.phone|default:"Unregistered" }}</div>
+                            </div>
+                            
+                            {% if tx.donation.status == 'ASSIGNED' %}
+                            <form action="{% url 'complete_donation' tx.pk %}" method="POST" class="mt-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold hover-lift" style="font-size: 0.8rem;">
+                                    MARK SECURED
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <p class="text-muted font-monospace small">No active logistics operations.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .blink_me { animation: blinker 2s linear infinite; }
+    @keyframes blinker { 50% { opacity: 0; } }
+</style>
+{% endblock %}
